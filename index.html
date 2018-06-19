@@ -1,0 +1,107 @@
+
+<html lang="en">
+
+<head>
+    <link rel="manifest" href="manifest.json">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" type="image/png" href="favicon.ico">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>weather App</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta/css/bootstrap.min.css">
+   
+    <style>
+        body {
+            font-family: 'Raleway', sans-serif;
+            background: linear-gradient(to right, rgb(147, 0, 111), rgb(250, 218, 233));
+            
+        }
+
+        h1 {
+            font-size: 60px;
+        }
+
+        .container {
+            margin-top: 40px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col text-center">
+                <h1 id="temp"></h1>
+                <br/>
+                <img src="" id="weather-icon">
+                <br/>
+                <span id="location"></span>
+                <br />
+                <button class="btn btn-default" id="convert-temp">&deg;F</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script>
+        var temp = 0;
+
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(savePosition);
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+
+        function savePosition(position) {
+            var weatherAPIURL = 'https://fcc-weather-api.glitch.me/api/current?';
+            $.getJSON(weatherAPIURL, {
+                    lat: position.coords.latitude,
+                    lon: position.coords.longitude
+                })
+                .done(function (data) {
+                    temp = Math.floor(data.main.temp);
+                    $('#weather-icon').attr('src', data.weather[0].icon);
+                    $('#temp').html(temp + '&deg;C');
+                    $('#location').html(data.name);
+                    console.log(data);
+                })
+        }
+
+        function convertTemp() {
+
+
+            var btnScale = $('#convert-temp').text().split('');
+
+            if (btnScale[1] == 'C') {
+                $('#convert-temp').html('&deg;F');
+                temp = (temp - 32) * .5556;
+                return Math.floor(temp) + '&deg;C';
+            } else {
+                $('#convert-temp').html('&deg;C');
+                temp = temp * 1.8 + 32
+                return Math.floor(temp) + '&deg;F';
+            }
+        }
+
+        $(function () {
+            getLocation();
+
+            $('#convert-temp').on('click', function () {
+                $('#temp').html(convertTemp());
+            });
+        })
+    </script>
+</body>
+
+</html>
